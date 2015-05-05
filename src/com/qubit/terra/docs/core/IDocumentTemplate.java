@@ -9,20 +9,20 @@
  * Contributors: anil.mamede@qub-it.com, diogo.simoes@qub-it.com
  *
  * 
- * This file is part of Qub Docs.
+ * This file is part of qub-docs.
  *
- * Qub Docs is free software: you can redistribute it and/or modify
+ * qub-docs is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * Qub Docs is distributed in the hope that it will be useful,
+ * qub-docs is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public License
- * along with Qub Docs.  If not, see <http://www.gnu.org/licenses/>.
+ * along with qub-docs.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 package com.qubit.terra.docs.core;
