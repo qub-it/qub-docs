@@ -1,0 +1,76 @@
+<!--
+/**
+ * This file was created by Quorum Born IT <http://www.qub-it.com/> and its 
+ * copyright terms are bind to the legal agreement regulating the FenixEdu@ULisboa 
+ * software development project between Quorum Born IT and Serviços Partilhados da
+ * Universidade de Lisboa:
+ *  - Copyright © 2015 Quorum Born IT (until any Go-Live phase)
+ *  - Copyright © 2015 Universidade de Lisboa (after any Go-Live phase)
+ *
+ * Contributors: anil.mamede@qub-it.com, diogo.simoes@qub-it.com
+ *
+ * 
+ * This file is part of Qub Docs.
+ *
+ * Qub Docs is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Qub Docs is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with Qub Docs.  If not, see <http://www.gnu.org/licenses/>.
+ */
+-->
+
+<ivy-module version="2.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"  xsi:noNamespaceSchemaLocation="http://ant.apache.org/ivy/schemas/ivy.xsd">
+
+	<info organisation="${organisation}" module="${name}"
+		revision="${artifact.full.version}" />
+
+	<configurations defaultconf="compile" defaultconfmapping="compile->default;compile-no-revision->default;runtime-no-revision->default;internal->default;provided->default;runtime->default">
+	<conf name="default" description="Default configuration"/>
+	<conf name="compile-no-revision" description="Compile dependencies. Jars downloaded without revision" visibility="private"/>
+	<conf name="runtime-no-revision" description="Runtime dependencies" visibility="private"/>
+	<conf name="javadoc" description="Downloads projects javadoc to lib directory"/>
+	
+	<conf name="compile" description="Compile dependencies" />	
+	<conf name="provided" description="Provided dependencies" extends="default" transitive="false"/> 
+	<conf name="runtime" description="Runtime dependencies" />
+	<conf name="internal" description="Compile dependencies that will not be exported as dependencies" visibility="private"/> 
+</configurations>
+
+
+
+
+	<publications>
+		<artifact name="${name}" type="jar" />
+		<artifact name="${name}" type="pom" ext="pom" />
+	</publications>
+	
+	<dependencies>
+		<dependency org="com.qubit.terra" name="qub-foundation" rev="latest.integration" conf="internal" />
+		
+		<dependency org="commons-io" name="commons-io" rev="2.4" />
+		<dependency org="com.google.guava" name="guava" rev="14.0.1" />
+		<dependency org="joda-time" name="joda-time" rev="1.6.2" />
+
+		<dependency org="fr.opensagres.xdocreport" name="fr.opensagres.xdocreport.core" rev="1.0.0" />
+		<dependency org="fr.opensagres.xdocreport" name="fr.opensagres.xdocreport.document" rev="1.0.0" />
+		<dependency org="fr.opensagres.xdocreport" name="fr.opensagres.xdocreport.template" rev="1.0.0" />
+		<dependency org="fr.opensagres.xdocreport" name="fr.opensagres.xdocreport.converter" rev="1.0.0" />
+		<dependency org="fr.opensagres.xdocreport" name="fr.opensagres.xdocreport.document.docx" rev="1.0.0" />
+		<dependency org="fr.opensagres.xdocreport" name="fr.opensagres.xdocreport.document.odt" rev="1.0.0" />
+		<dependency org="fr.opensagres.xdocreport" name="fr.opensagres.xdocreport.itext.extension" rev="1.0.0" />
+		<dependency org="fr.opensagres.xdocreport" name="fr.opensagres.xdocreport.remoting.resources" rev="1.0.0"/>
+		<dependency org="fr.opensagres.xdocreport" name="fr.opensagres.xdocreport.template.freemarker" rev="1.0.0" />
+		<dependency org="fr.opensagres.xdocreport" name="fr.opensagres.xdocreport.template.velocity" rev="1.0.0" />
+		<dependency org="fr.opensagres.xdocreport" name="org.apache.poi.xwpf.converter.pdf" rev="1.0.0" />
+		<dependency org="fr.opensagres.xdocreport" name="org.odftoolkit.odfdom.converter.pdf" rev="1.0.0" />		
+	</dependencies>
+
+</ivy-module>

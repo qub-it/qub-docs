@@ -1,0 +1,5 @@
+1.0.1 (dd-MM-2015)
+
+1.0.0 (30-03-2015)
+ - Document generation tool built on top of xdocreports. This tool was extracted from qubEdu-module-documents.
+ - Minor adjustment: naming conformity.
