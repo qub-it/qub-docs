@@ -81,6 +81,11 @@
 		</dependency>
 		<dependency>
 			<groupId>fr.opensagres.xdocreport</groupId>
+			<artifactId>fr.opensagres.xdocreport.document.tools</artifactId>
+			<version>1.0.0</version>
+		</dependency>		
+		<dependency>
+			<groupId>fr.opensagres.xdocreport</groupId>
 			<artifactId>org.apache.poi.xwpf.converter.pdf</artifactId>
 			<version>1.0.0</version>
 		</dependency>
@@ -116,8 +121,8 @@
 							<goal>compile</goal>
 						</goals>
 						<configuration>
-							<source>1.8</source>
-							<target>1.8</target>
+							<source>1.7</source>
+							<target>1.7</target>
 							<verbose>true</verbose>
 							<fork>true</fork>
 						</configuration>
@@ -134,6 +139,9 @@
 					<include>RELEASE_NOTES</include>
 				</includes>
 			</resource>
+		    <resource>
+		    	<directory>src/main/resources</directory>
+		    </resource>
 		</resources>
 	</build>
 </project>
