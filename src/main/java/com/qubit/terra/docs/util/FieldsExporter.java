@@ -58,7 +58,7 @@ public class FieldsExporter {
 
         private static final String CDATA = "<![CDATA[]]>";
 
-        private static final String LINE_BREAK = "<BR />";
+        private static final String LINE_BREAK = "<br/>";
 
         private String description;
 
