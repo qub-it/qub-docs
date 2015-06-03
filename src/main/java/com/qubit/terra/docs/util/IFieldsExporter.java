@@ -27,14 +27,10 @@
 
 package com.qubit.terra.docs.util;
 
-public interface IReportDataProvider {
+public interface IFieldsExporter {
 
-    public void registerFieldsAndImages(final IDocumentFieldsData documentFieldsData);
+    public IFieldsExporter registerSimpleField(String key, String description);
 
-    public boolean handleKey(final String key);
-
-    public Object valueForKey(final String key);
-
-    public void registerFieldsMetadata(final IFieldsExporter exporter);
+    public IFieldsExporter registerCollectionField(String key, String description);
 
 }
