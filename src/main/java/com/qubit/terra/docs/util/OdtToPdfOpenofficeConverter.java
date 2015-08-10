@@ -48,11 +48,11 @@ public class OdtToPdfOpenofficeConverter implements IReportConverter {
     @Override
     public byte[] convert(InputStream document) {
         try {
-            return OpenofficeInProcessConverter.convertToPdf(IOUtils.toByteArray(document), "/tmp");
+            //return OpenofficeInProcessConverter.convertToPdf(IOUtils.toByteArray(document), "/tmp");
             //THIS SHOULD BE REPLACED WITH System.IO. TEMP DIR
-            //String property = "java.io.tmpdir";
-            //String tempDir = System.getProperty(property);
-            //return OpenofficeInProcessConverter.convertToPdf(IOUtils.toByteArray(document), tempDir);
+            String property = "java.io.tmpdir";
+            String tempDir = System.getProperty(property);
+            return OpenofficeInProcessConverter.convertToPdf(IOUtils.toByteArray(document), tempDir);
         } catch (final Exception e) {
             throw new ReportGenerationException("Error converting the report", e);
         }
