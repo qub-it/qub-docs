@@ -39,26 +39,51 @@ public class OpenofficeInProcessConverter {
 
         try {
             long currentTimeMillis = System.currentTimeMillis();
-            final String odtFilename = tempDirFullPath + "/openofficeConversion-" + currentTimeMillis + ".odt";
+            if (System.getProperty("os.name").startsWith("Windows")) {
+                final String odtFilename = tempDirFullPath + "openofficeConversion-" + currentTimeMillis + ".odt";
 
-            FileUtils.writeByteArrayToFile(new File(odtFilename), odtContent);
+                FileUtils.writeByteArrayToFile(new File(odtFilename), odtContent);
 
-            final Process process =
-                    Runtime.getRuntime().exec(
-                            String.format("soffice --headless --convert-to pdf -env:UserInstallation=file:///tmp --outdir %s %s",
-                                    tempDirFullPath, odtFilename));
+                final Process process =
+                        Runtime.getRuntime().exec(
+                                String.format("soffice --headless --convert-to pdf --outdir %s %s",
+                                        tempDirFullPath.subSequence(0, tempDirFullPath.length() - 1), odtFilename));
 
-            try {
-                process.waitFor();
-            } catch (InterruptedException e) {
+                try {
+                    process.waitFor();
+                } catch (InterruptedException e) {
+                }
+
+                process.destroy();
+
+                final String pdfFilename = tempDirFullPath + "openofficeConversion-" + currentTimeMillis + ".pdf";
+                final byte[] output = FileUtils.readFileToByteArray(new File(pdfFilename));
+
+                return output;
+
+            } else {
+                final String odtFilename = tempDirFullPath + "/openofficeConversion-" + currentTimeMillis + ".odt";
+
+                FileUtils.writeByteArrayToFile(new File(odtFilename), odtContent);
+
+                final Process process =
+                        Runtime.getRuntime().exec(
+                                String.format("soffice --headless --convert-to pdf -env:UserInstallation=file://"
+                                        + tempDirFullPath + " --outdir %s %s", tempDirFullPath, odtFilename));
+
+                try {
+                    process.waitFor();
+                } catch (InterruptedException e) {
+                }
+
+                process.destroy();
+
+                final String pdfFilename = tempDirFullPath + "/openofficeConversion-" + currentTimeMillis + ".pdf";
+                final byte[] output = FileUtils.readFileToByteArray(new File(pdfFilename));
+
+                return output;
+
             }
-
-            process.destroy();
-
-            final String pdfFilename = tempDirFullPath + "/openofficeConversion-" + currentTimeMillis + ".pdf";
-            final byte[] output = FileUtils.readFileToByteArray(new File(pdfFilename));
-
-            return output;
         } catch (final Throwable e) {
             throw new OpenofficeInProcessConversionException(e);
         }
