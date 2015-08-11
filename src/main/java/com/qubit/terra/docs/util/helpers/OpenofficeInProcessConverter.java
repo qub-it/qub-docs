@@ -59,6 +59,8 @@ public class OpenofficeInProcessConverter {
                 final String pdfFilename = tempDirFullPath + "openofficeConversion-" + currentTimeMillis + ".pdf";
                 final byte[] output = FileUtils.readFileToByteArray(new File(pdfFilename));
 
+                FileUtils.deleteQuietly(new File(odtFilename));
+                FileUtils.deleteQuietly(new File(pdfFilename));
                 return output;
 
             } else {
@@ -80,7 +82,8 @@ public class OpenofficeInProcessConverter {
 
                 final String pdfFilename = tempDirFullPath + "/openofficeConversion-" + currentTimeMillis + ".pdf";
                 final byte[] output = FileUtils.readFileToByteArray(new File(pdfFilename));
-
+                FileUtils.deleteQuietly(new File(odtFilename));
+                FileUtils.deleteQuietly(new File(pdfFilename));
                 return output;
 
             }
