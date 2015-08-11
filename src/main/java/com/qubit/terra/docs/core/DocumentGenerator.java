@@ -30,9 +30,11 @@ package com.qubit.terra.docs.core;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Collection;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 
 import com.qubit.terra.docs.util.IReportDataProvider;
 import com.qubit.terra.docs.util.ReportGenerationException;
@@ -65,6 +67,14 @@ public class DocumentGenerator extends ReportGenerator {
             return new DocumentGenerator(FileUtils.readFileToByteArray(new File(template)), mimeType);
         } catch (FileNotFoundException e) {
             throw new ReportGenerationException("Error finding template", e);
+        } catch (IOException e) {
+            throw new ReportGenerationException("Error finding template", e);
+        }
+    }
+
+    public static DocumentGenerator create(InputStream inputStream, final String mimeType) {
+        try {
+            return new DocumentGenerator(IOUtils.toByteArray(inputStream), mimeType);
         } catch (IOException e) {
             throw new ReportGenerationException("Error finding template", e);
         }
