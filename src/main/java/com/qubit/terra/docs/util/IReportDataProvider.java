@@ -35,6 +35,4 @@ public interface IReportDataProvider {
 
     public Object valueForKey(final String key);
 
-    public void registerFieldsMetadata(final IFieldsExporter exporter);
-
 }

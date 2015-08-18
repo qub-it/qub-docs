@@ -31,6 +31,7 @@ import java.util.Collection;
 
 import com.qubit.terra.docs.util.FieldsExporter;
 import com.qubit.terra.docs.util.IReportDataProvider;
+import com.qubit.terra.docs.util.IReportFieldsProvider;
 
 public class DocumentTemplateEngine {
 
@@ -61,9 +62,9 @@ public class DocumentTemplateEngine {
         return documentGenerator;
     }
 
-    public byte[] exportFields(final Collection<? extends IReportDataProvider> dataProviders) {
+    public byte[] exportFields(final Collection<? extends IReportFieldsProvider> fieldsProviders) {
         FieldsExporter exporter = new FieldsExporter();
-        for (IReportDataProvider provider : dataProviders) {
+        for (IReportFieldsProvider provider : fieldsProviders) {
             provider.registerFieldsMetadata(exporter);
         }
         return exporter.exportFields();
