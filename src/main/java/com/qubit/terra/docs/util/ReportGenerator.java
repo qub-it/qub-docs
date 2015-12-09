@@ -102,9 +102,8 @@ public class ReportGenerator implements IDocumentFieldsData {
         this.converters = new LinkedList<IReportConverter>();
         this.converters.add(new DocxToPdfReportConverter(fontsPath));
         this.converters.add(new DocxToDocxReportConverter());
-        this.converters
-                .add(DocumentTemplateEngine.getServiceImplementation().isOpenOfficeConverting() ? new OdtToPdfOpenofficeConverter() : new OdtToPdfReportConverter(
-                        fontsPath));
+        this.converters.add(DocumentTemplateEngine.getServiceImplementation()
+                .isOpenOfficeConverting() ? new OdtToPdfOpenofficeConverter() : new OdtToPdfReportConverter(fontsPath));
         this.converters.add(new OdtToOdtReportConverter());
     }
 
@@ -176,13 +175,13 @@ public class ReportGenerator implements IDocumentFieldsData {
 
             return convert(generatedReport);
         } catch (XDocReportException | IOException e) {
-            throw new ReportGenerationException("Error generating the report", e);
+            throw new ReportGenerationException(e.getMessage(), e);
         } finally {
             if (generatedReport != null) {
                 try {
                     generatedReport.close();
                 } catch (IOException e) {
-                    throw new ReportGenerationException("Error generating the report", e);
+                    throw new ReportGenerationException(e.getMessage(), e);
                 }
             }
 
@@ -190,7 +189,7 @@ public class ReportGenerator implements IDocumentFieldsData {
                 try {
                     outputStream.close();
                 } catch (IOException e) {
-                    throw new ReportGenerationException("Error generating the report", e);
+                    throw new ReportGenerationException(e.getMessage(), e);
                 }
             }
         }
