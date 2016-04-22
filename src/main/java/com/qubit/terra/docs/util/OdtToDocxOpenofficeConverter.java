@@ -33,7 +33,7 @@ import org.apache.commons.io.IOUtils;
 
 import com.qubit.terra.docs.util.helpers.OpenofficeInProcessConverter;
 
-public class OdtToPdfOpenofficeConverter implements IReportConverter {
+public class OdtToDocxOpenofficeConverter implements IReportConverter {
 
     @Override
     public boolean convertFromType(String mimeType) {
@@ -42,7 +42,7 @@ public class OdtToPdfOpenofficeConverter implements IReportConverter {
 
     @Override
     public boolean isForType(String mimeType) {
-        return ReportGenerator.PDF.equals(mimeType);
+        return ReportGenerator.DOCX.equals(mimeType);
     }
 
     @Override
@@ -52,7 +52,7 @@ public class OdtToPdfOpenofficeConverter implements IReportConverter {
             //THIS SHOULD BE REPLACED WITH System.IO. TEMP DIR
             String property = "java.io.tmpdir";
             String tempDir = System.getProperty(property);
-            return OpenofficeInProcessConverter.convert(IOUtils.toByteArray(document), tempDir, "pdf");
+            return OpenofficeInProcessConverter.convert(IOUtils.toByteArray(document), tempDir, "docx");
         } catch (final Exception e) {
             throw new ReportGenerationException("Error converting the report", e);
         }

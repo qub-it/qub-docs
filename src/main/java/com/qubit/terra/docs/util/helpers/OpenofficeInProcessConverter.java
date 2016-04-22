@@ -35,7 +35,8 @@ public class OpenofficeInProcessConverter {
 
     private static final long ELAPSE_TIME = 2000;
 
-    public static synchronized byte[] convertToPdf(final byte[] odtContent, final String tempDirFullPath) {
+    public static synchronized byte[] convert(final byte[] odtContent, final String tempDirFullPath,
+            final String mimeTypeAbbreviation) {
 
         try {
             long currentTimeMillis = System.currentTimeMillis();
@@ -45,9 +46,8 @@ public class OpenofficeInProcessConverter {
                 FileUtils.writeByteArrayToFile(new File(odtFilename), odtContent);
 
                 final Process process =
-                        Runtime.getRuntime().exec(
-                                String.format("soffice --headless --convert-to pdf --outdir %s %s",
-                                        tempDirFullPath.subSequence(0, tempDirFullPath.length() - 1), odtFilename));
+                        Runtime.getRuntime().exec(String.format("soffice --headless --convert-to %s --outdir %s %s",
+                                mimeTypeAbbreviation, tempDirFullPath.subSequence(0, tempDirFullPath.length() - 1), odtFilename));
 
                 try {
                     process.waitFor();
@@ -56,11 +56,12 @@ public class OpenofficeInProcessConverter {
 
                 process.destroy();
 
-                final String pdfFilename = tempDirFullPath + "openofficeConversion-" + currentTimeMillis + ".pdf";
-                final byte[] output = FileUtils.readFileToByteArray(new File(pdfFilename));
+                final String outputFilename =
+                        tempDirFullPath + "openofficeConversion-" + currentTimeMillis + "." + mimeTypeAbbreviation;
+                final byte[] output = FileUtils.readFileToByteArray(new File(outputFilename));
 
                 FileUtils.deleteQuietly(new File(odtFilename));
-                FileUtils.deleteQuietly(new File(pdfFilename));
+                FileUtils.deleteQuietly(new File(outputFilename));
                 return output;
 
             } else {
@@ -69,9 +70,10 @@ public class OpenofficeInProcessConverter {
                 FileUtils.writeByteArrayToFile(new File(odtFilename), odtContent);
 
                 final Process process =
-                        Runtime.getRuntime().exec(
-                                String.format("soffice --headless --convert-to pdf -env:UserInstallation=file://"
-                                        + tempDirFullPath + " --outdir %s %s", tempDirFullPath, odtFilename));
+                        Runtime.getRuntime()
+                                .exec(String.format(
+                                        "soffice --headless --convert-to %s -env:UserInstallation=file://%s --outdir %s %s",
+                                        mimeTypeAbbreviation, tempDirFullPath, tempDirFullPath, odtFilename));
 
                 try {
                     process.waitFor();
@@ -80,10 +82,11 @@ public class OpenofficeInProcessConverter {
 
                 process.destroy();
 
-                final String pdfFilename = tempDirFullPath + "/openofficeConversion-" + currentTimeMillis + ".pdf";
-                final byte[] output = FileUtils.readFileToByteArray(new File(pdfFilename));
+                final String outputFilename =
+                        tempDirFullPath + "/openofficeConversion-" + currentTimeMillis + "." + mimeTypeAbbreviation;
+                final byte[] output = FileUtils.readFileToByteArray(new File(outputFilename));
                 FileUtils.deleteQuietly(new File(odtFilename));
-                FileUtils.deleteQuietly(new File(pdfFilename));
+                FileUtils.deleteQuietly(new File(outputFilename));
                 return output;
 
             }

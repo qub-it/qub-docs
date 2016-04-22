@@ -105,6 +105,10 @@ public class ReportGenerator implements IDocumentFieldsData {
         this.converters.add(DocumentTemplateEngine.getServiceImplementation()
                 .isOpenOfficeConverting() ? new OdtToPdfOpenofficeConverter() : new OdtToPdfReportConverter(fontsPath));
         this.converters.add(new OdtToOdtReportConverter());
+        //TODOJN: create a generic report converter - OdtToDocxReportConverter
+        if (DocumentTemplateEngine.getServiceImplementation().isOpenOfficeConverting()) {
+            this.converters.add(new OdtToDocxOpenofficeConverter());
+        }
     }
 
     public ReportGenerator registerDataProvider(final IReportDataProvider provider) {
