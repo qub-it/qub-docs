@@ -35,8 +35,10 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -75,6 +77,7 @@ public class ReportGenerator implements IDocumentFieldsData {
     protected String fontsPath;
     protected ContextMap contextMap;
     protected FieldsMetadata fieldsMetadata;
+    protected List<ReportGeneratorPreProcessor> preProcessors;
 
     public LinkedList<IReportConverter> converters;
 
@@ -84,12 +87,17 @@ public class ReportGenerator implements IDocumentFieldsData {
         this.fontsPath = fontsPath;
         this.contextMap = new ContextMap();
         this.fieldsMetadata = new FieldsMetadata();
+        this.preProcessors = new ArrayList<ReportGeneratorPreProcessor>();
 
         loadDefaultConverts();
     }
 
     public void registerHelper(String helperKey, IDocumentHelper documentHelper) {
         this.contextMap.put(helperKey, documentHelper);
+    }
+
+    public void registerPreProcessors(ReportGeneratorPreProcessor preProcessor) {
+        this.preProcessors.add(preProcessor);
     }
 
     protected void configureTemplateEngine(final ITemplateEngine engine) {
@@ -171,6 +179,10 @@ public class ReportGenerator implements IDocumentFieldsData {
             final String freemarkerEngineKind = TemplateEngineKind.Freemarker.name();
             IXDocReport report =
                     XDocReport.loadReport(template, freemarkerEngineKind, fieldsMetadata, XDocReportRegistry.getRegistry());
+
+            for (ReportGeneratorPreProcessor preProcessor : preProcessors) {
+                report.addPreprocessor(preProcessor.getEntryName(), preProcessor);
+            }
 
             configureTemplateEngine(report.getTemplateEngine());
             report.process(contextMap, outputStream);
