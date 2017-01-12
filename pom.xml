@@ -88,7 +88,23 @@
 			<groupId>fr.opensagres.xdocreport</groupId>
 			<artifactId>org.odftoolkit.odfdom.converter.pdf</artifactId>
 			<version>1.0.0</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.odftoolkit</groupId>
+                    <artifactId>odfdom-java</artifactId>
+                </exclusion>
+            </exclusions>
 		</dependency>
+        <dependency>
+            <groupId>org.apache.odftoolkit</groupId>
+            <artifactId>odfdom-java</artifactId>
+            <version>0.8.10-incubating</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.odftoolkit</groupId>
+            <artifactId>simple-odf</artifactId>
+            <version>0.8.1-incubating</version>
+        </dependency>
 	</dependencies>
 
 	<!-- Build configurations (You probably don't want to change these) -->

@@ -191,6 +191,7 @@ public class ReportGenerator implements IDocumentFieldsData {
 
             return convert(generatedReport);
         } catch (XDocReportException | IOException e) {
+            e.printStackTrace();
             throw new ReportGenerationException(e.getMessage(), e);
         } finally {
             if (generatedReport != null) {
