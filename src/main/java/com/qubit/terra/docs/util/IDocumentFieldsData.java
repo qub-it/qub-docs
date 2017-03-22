@@ -1,6 +1,6 @@
 /**
- * This file was created by Quorum Born IT <http://www.qub-it.com/> and its 
- * copyright terms are bind to the legal agreement regulating the FenixEdu@ULisboa 
+ * This file was created by Quorum Born IT <http://www.qub-it.com/> and its
+ * copyright terms are bind to the legal agreement regulating the FenixEdu@ULisboa
  * software development project between Quorum Born IT and Serviços Partilhados da
  * Universidade de Lisboa:
  *  - Copyright © 2015 Quorum Born IT (until any Go-Live phase)
@@ -8,7 +8,7 @@
  *
  * Contributors: anil.mamede@qub-it.com, diogo.simoes@qub-it.com
  *
- * 
+ *
  * This file is part of qub-docs.
  *
  * qub-docs is free software: you can redistribute it and/or modify
@@ -27,7 +27,11 @@
 
 package com.qubit.terra.docs.util;
 
+import fr.opensagres.xdocreport.template.formatter.NullImageBehaviour;
+
 public interface IDocumentFieldsData {
+
+    public IDocumentFieldsData registerImageNullBehaviour(final String imageName, final NullImageBehaviour nullImageBehaviour);
 
     public IDocumentFieldsData registerImage(final String imageName, final byte[] image);
 

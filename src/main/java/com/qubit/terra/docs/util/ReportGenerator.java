@@ -1,6 +1,6 @@
 /**
- * This file was created by Quorum Born IT <http://www.qub-it.com/> and its 
- * copyright terms are bind to the legal agreement regulating the FenixEdu@ULisboa 
+ * This file was created by Quorum Born IT <http://www.qub-it.com/> and its
+ * copyright terms are bind to the legal agreement regulating the FenixEdu@ULisboa
  * software development project between Quorum Born IT and Serviços Partilhados da
  * Universidade de Lisboa:
  *  - Copyright © 2015 Quorum Born IT (until any Go-Live phase)
@@ -8,7 +8,7 @@
  *
  * Contributors: anil.mamede@qub-it.com, diogo.simoes@qub-it.com
  *
- * 
+ *
  * This file is part of qub-docs.
  *
  * qub-docs is free software: you can redistribute it and/or modify
@@ -61,6 +61,7 @@ import fr.opensagres.xdocreport.document.registry.XDocReportRegistry;
 import fr.opensagres.xdocreport.template.ITemplateEngine;
 import fr.opensagres.xdocreport.template.TemplateEngineKind;
 import fr.opensagres.xdocreport.template.formatter.FieldsMetadata;
+import fr.opensagres.xdocreport.template.formatter.NullImageBehaviour;
 import fr.opensagres.xdocreport.template.freemarker.FreemarkerTemplateEngine;
 import freemarker.template.Configuration;
 
@@ -87,16 +88,16 @@ public class ReportGenerator implements IDocumentFieldsData {
         this.fontsPath = fontsPath;
         this.contextMap = new ContextMap();
         this.fieldsMetadata = new FieldsMetadata();
-        this.preProcessors = new ArrayList<ReportGeneratorPreProcessor>();
+        this.preProcessors = new ArrayList<>();
 
         loadDefaultConverts();
     }
 
-    public void registerHelper(String helperKey, IDocumentHelper documentHelper) {
+    public void registerHelper(final String helperKey, final IDocumentHelper documentHelper) {
         this.contextMap.put(helperKey, documentHelper);
     }
 
-    public void registerPreProcessors(ReportGeneratorPreProcessor preProcessor) {
+    public void registerPreProcessors(final ReportGeneratorPreProcessor preProcessor) {
         this.preProcessors.add(preProcessor);
     }
 
@@ -107,7 +108,7 @@ public class ReportGenerator implements IDocumentFieldsData {
     }
 
     protected void loadDefaultConverts() {
-        this.converters = new LinkedList<IReportConverter>();
+        this.converters = new LinkedList<>();
         this.converters.add(new DocxToPdfReportConverter(fontsPath));
         this.converters.add(new DocxToDocxReportConverter());
         this.converters.add(DocumentTemplateEngine.getServiceImplementation()
@@ -131,6 +132,12 @@ public class ReportGenerator implements IDocumentFieldsData {
     }
 
     @Override
+    public IDocumentFieldsData registerImageNullBehaviour(final String imageName, final NullImageBehaviour behaviour) {
+        this.fieldsMetadata.addFieldAsImage(imageName, behaviour);
+        return this;
+    }
+
+    @Override
     public IDocumentFieldsData registerImage(final String imageName, final byte[] image) {
         IImageProvider imageProvider = new ByteArrayImageProvider(image);
         this.contextMap.put(imageName, imageProvider);
@@ -138,7 +145,7 @@ public class ReportGenerator implements IDocumentFieldsData {
         return this;
     }
 
-    public ReportGenerator registerConverter(IReportConverter converter) {
+    public ReportGenerator registerConverter(final IReportConverter converter) {
         converters.addFirst(converter);
         return this;
     }
@@ -232,7 +239,7 @@ public class ReportGenerator implements IDocumentFieldsData {
         }
     }
 
-    public static byte[] concatPDFs(Collection<byte[]> documents) {
+    public static byte[] concatPDFs(final Collection<byte[]> documents) {
 
         try {
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
@@ -255,7 +262,7 @@ public class ReportGenerator implements IDocumentFieldsData {
 
     private class ContextMap extends java.util.HashMap<String, Object> {
 
-        private LinkedList<IReportDataProvider> dataProviders = new LinkedList<IReportDataProvider>();
+        private final LinkedList<IReportDataProvider> dataProviders = new LinkedList<>();
 
         private static final long serialVersionUID = 1L;
 
@@ -283,12 +290,12 @@ public class ReportGenerator implements IDocumentFieldsData {
         }
 
         @Override
-        public boolean containsValue(Object value) {
+        public boolean containsValue(final Object value) {
             return false;
         }
 
         @Override
-        public Object get(Object key) {
+        public Object get(final Object key) {
             for (IReportDataProvider provider : dataProviders) {
                 if (provider.handleKey((String) key)) {
                     return provider.valueForKey((String) key);
@@ -299,17 +306,17 @@ public class ReportGenerator implements IDocumentFieldsData {
         }
 
         @Override
-        public Object put(String key, Object value) {
+        public Object put(final String key, final Object value) {
             return super.put(key, value);
         }
 
         @Override
-        public Object remove(Object key) {
+        public Object remove(final Object key) {
             return super.remove(key);
         }
 
         @Override
-        public void putAll(Map m) {
+        public void putAll(final Map m) {
             super.putAll(m);
 
         }
