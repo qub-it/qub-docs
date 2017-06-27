@@ -24,16 +24,16 @@ public class OdtFootEndNotePostProcessor extends ReportGeneratorPostProcessor {
     protected static String TEXT_NOTE_NODE_NAME = "text:note";
     protected static String TEXT_PARAGRAPH_NODE_NAME = "text:p";
 
-    protected Boolean alignLeft;
+    protected Boolean alignRight;
 
     public OdtFootEndNotePostProcessor(final Boolean alignLeft) {
-        this.alignLeft = alignLeft;
+        this.alignRight = alignLeft;
     }
 
     @Override
     protected void visit() {
         try {
-            if (alignLeft != null && !alignLeft) {
+            if (alignRight != null && alignRight) {
                 visitFootNotes();
                 visitEndNotes();
                 visitFooter();
