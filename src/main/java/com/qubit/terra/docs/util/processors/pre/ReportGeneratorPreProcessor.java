@@ -1,4 +1,4 @@
-package com.qubit.terra.docs.util;
+package com.qubit.terra.docs.util.processors.pre;
 
 import fr.opensagres.xdocreport.document.preprocessor.dom.DOMPreprocessor;
 

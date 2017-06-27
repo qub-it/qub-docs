@@ -50,7 +50,16 @@ import com.lowagie.text.DocumentException;
 import com.lowagie.text.pdf.PdfCopyFields;
 import com.lowagie.text.pdf.PdfReader;
 import com.qubit.terra.docs.core.DocumentTemplateEngine;
+import com.qubit.terra.docs.util.converters.DocxToDocxReportConverter;
+import com.qubit.terra.docs.util.converters.DocxToPdfReportConverter;
+import com.qubit.terra.docs.util.converters.OdtToDocxOpenofficeConverter;
+import com.qubit.terra.docs.util.converters.OdtToOdtReportConverter;
+import com.qubit.terra.docs.util.converters.OdtToPdfOpenofficeConverter;
+import com.qubit.terra.docs.util.converters.OdtToPdfReportConverter;
 import com.qubit.terra.docs.util.helpers.IDocumentHelper;
+import com.qubit.terra.docs.util.helpers.OpenofficeInProcessConverter;
+import com.qubit.terra.docs.util.processors.post.ReportGeneratorPostProcessor;
+import com.qubit.terra.docs.util.processors.pre.ReportGeneratorPreProcessor;
 
 import fr.opensagres.xdocreport.core.XDocReportException;
 import fr.opensagres.xdocreport.document.IXDocReport;
@@ -79,6 +88,7 @@ public class ReportGenerator implements IDocumentFieldsData {
     protected ContextMap contextMap;
     protected FieldsMetadata fieldsMetadata;
     protected List<ReportGeneratorPreProcessor> preProcessors;
+    protected List<ReportGeneratorPostProcessor> postProcessors;
 
     public LinkedList<IReportConverter> converters;
 
@@ -89,6 +99,7 @@ public class ReportGenerator implements IDocumentFieldsData {
         this.contextMap = new ContextMap();
         this.fieldsMetadata = new FieldsMetadata();
         this.preProcessors = new ArrayList<>();
+        this.postProcessors = new ArrayList<>();
 
         loadDefaultConverts();
     }
@@ -99,6 +110,10 @@ public class ReportGenerator implements IDocumentFieldsData {
 
     public void registerPreProcessors(final ReportGeneratorPreProcessor preProcessor) {
         this.preProcessors.add(preProcessor);
+    }
+
+    public void registerPostProcessors(final ReportGeneratorPostProcessor postProcessor) {
+        this.postProcessors.add(postProcessor);
     }
 
     protected void configureTemplateEngine(final ITemplateEngine engine) {
@@ -194,7 +209,19 @@ public class ReportGenerator implements IDocumentFieldsData {
             configureTemplateEngine(report.getTemplateEngine());
             report.process(contextMap, outputStream);
 
-            generatedReport = new ByteArrayInputStream(outputStream.toByteArray());
+            byte[] reportByteArray = outputStream.toByteArray();
+
+            //In order to export the layout information to the content section (add soft-page-breaks)
+            // we need to open and save the odt file
+            String property = "java.io.tmpdir";
+            String tempDir = System.getProperty(property);
+            reportByteArray = OpenofficeInProcessConverter.convert(reportByteArray, tempDir, "odt");
+
+            for (ReportGeneratorPostProcessor postProcessor : postProcessors) {
+                reportByteArray = postProcessor.process(reportByteArray);
+            }
+
+            generatedReport = new ByteArrayInputStream(reportByteArray);
 
             return convert(generatedReport);
         } catch (XDocReportException | IOException e) {

@@ -1,6 +1,6 @@
 /**
- * This file was created by Quorum Born IT <http://www.qub-it.com/> and its 
- * copyright terms are bind to the legal agreement regulating the FenixEdu@ULisboa 
+ * This file was created by Quorum Born IT <http://www.qub-it.com/> and its
+ * copyright terms are bind to the legal agreement regulating the FenixEdu@ULisboa
  * software development project between Quorum Born IT and Serviços Partilhados da
  * Universidade de Lisboa:
  *  - Copyright © 2015 Quorum Born IT (until any Go-Live phase)
@@ -8,7 +8,7 @@
  *
  * Contributors: anil.mamede@qub-it.com, diogo.simoes@qub-it.com
  *
- * 
+ *
  * This file is part of qub-docs.
  *
  * qub-docs is free software: you can redistribute it and/or modify
@@ -25,21 +25,20 @@
  * along with qub-docs.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.qubit.terra.docs.util;
+package com.qubit.terra.docs.util.converters;
 
 import java.io.IOException;
 import java.io.InputStream;
 
-public class OdtToOdtReportConverter implements IReportConverter {
+import com.qubit.terra.docs.util.IReportConverter;
+import com.qubit.terra.docs.util.ReportGenerationException;
+import com.qubit.terra.docs.util.ReportGenerator;
 
-    @Override
-    public boolean convertFromType(final String mimeType) {
-        return ReportGenerator.ODT.equals(mimeType);
-    }
+public class DocxToDocxReportConverter implements IReportConverter {
 
     @Override
     public boolean isForType(final String mimeType) {
-        return ReportGenerator.ODT.equals(mimeType);
+        return ReportGenerator.DOCX.equals(mimeType);
     }
 
     @Override
@@ -52,6 +51,11 @@ public class OdtToOdtReportConverter implements IReportConverter {
         } catch (IOException e) {
             throw new ReportGenerationException("Error converting the report", e);
         }
+    }
+
+    @Override
+    public boolean convertFromType(final String mimeType) {
+        return ReportGenerator.DOCX.equals(mimeType);
     }
 
 }

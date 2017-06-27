@@ -25,22 +25,16 @@
  * along with qub-docs.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.qubit.terra.docs.util;
+package com.qubit.terra.docs.util.converters;
 
-import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 
-import org.odftoolkit.odfdom.converter.pdf.PdfConverter;
-import org.odftoolkit.odfdom.converter.pdf.PdfOptions;
-import org.odftoolkit.odfdom.doc.OdfTextDocument;
+import com.qubit.terra.docs.util.IReportConverter;
+import com.qubit.terra.docs.util.ReportGenerationException;
+import com.qubit.terra.docs.util.ReportGenerator;
 
-public class OdtToPdfReportConverter implements IReportConverter {
-
-    private FontProvider fontProvider;
-
-    public OdtToPdfReportConverter(final String fontDirectory) {
-        fontProvider = FontProvider.create();
-    }
+public class OdtToOdtReportConverter implements IReportConverter {
 
     @Override
     public boolean convertFromType(final String mimeType) {
@@ -49,22 +43,17 @@ public class OdtToPdfReportConverter implements IReportConverter {
 
     @Override
     public boolean isForType(final String mimeType) {
-        return ReportGenerator.PDF.equals(mimeType);
+        return ReportGenerator.ODT.equals(mimeType);
     }
 
     @Override
-    public byte[] convert(InputStream document) {
+    public byte[] convert(final InputStream document) {
         try {
+            byte[] buffer = new byte[document.available()];
+            document.read(buffer);
 
-            OdfTextDocument odfDocument = OdfTextDocument.loadDocument(document);
-            PdfOptions options = PdfOptions.getDefault();
-            options.fontProvider(fontProvider);
-
-            ByteArrayOutputStream result = new ByteArrayOutputStream();
-            PdfConverter.getInstance().convert(odfDocument, result, options);
-
-            return result.toByteArray();
-        } catch (final Exception e) {
+            return buffer;
+        } catch (IOException e) {
             throw new ReportGenerationException("Error converting the report", e);
         }
     }

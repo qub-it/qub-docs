@@ -25,34 +25,50 @@
  * along with qub-docs.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.qubit.terra.docs.util;
+package com.qubit.terra.docs.util.converters;
 
+import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 
-import org.apache.commons.io.IOUtils;
+import org.odftoolkit.odfdom.converter.pdf.PdfConverter;
+import org.odftoolkit.odfdom.converter.pdf.PdfOptions;
+import org.odftoolkit.odfdom.doc.OdfTextDocument;
 
-import com.qubit.terra.docs.util.helpers.OpenofficeInProcessConverter;
+import com.qubit.terra.docs.util.FontProvider;
+import com.qubit.terra.docs.util.IReportConverter;
+import com.qubit.terra.docs.util.ReportGenerationException;
+import com.qubit.terra.docs.util.ReportGenerator;
 
-public class OdtToDocxOpenofficeConverter implements IReportConverter {
+public class OdtToPdfReportConverter implements IReportConverter {
+
+    private FontProvider fontProvider;
+
+    public OdtToPdfReportConverter(final String fontDirectory) {
+        fontProvider = FontProvider.create();
+    }
 
     @Override
-    public boolean convertFromType(String mimeType) {
+    public boolean convertFromType(final String mimeType) {
         return ReportGenerator.ODT.equals(mimeType);
     }
 
     @Override
-    public boolean isForType(String mimeType) {
-        return ReportGenerator.DOCX.equals(mimeType);
+    public boolean isForType(final String mimeType) {
+        return ReportGenerator.PDF.equals(mimeType);
     }
 
     @Override
     public byte[] convert(InputStream document) {
         try {
-            //return OpenofficeInProcessConverter.convertToPdf(IOUtils.toByteArray(document), "/tmp");
-            //THIS SHOULD BE REPLACED WITH System.IO. TEMP DIR
-            String property = "java.io.tmpdir";
-            String tempDir = System.getProperty(property);
-            return OpenofficeInProcessConverter.convert(IOUtils.toByteArray(document), tempDir, "docx");
+
+            OdfTextDocument odfDocument = OdfTextDocument.loadDocument(document);
+            PdfOptions options = PdfOptions.getDefault();
+            options.fontProvider(fontProvider);
+
+            ByteArrayOutputStream result = new ByteArrayOutputStream();
+            PdfConverter.getInstance().convert(odfDocument, result, options);
+
+            return result.toByteArray();
         } catch (final Exception e) {
             throw new ReportGenerationException("Error converting the report", e);
         }

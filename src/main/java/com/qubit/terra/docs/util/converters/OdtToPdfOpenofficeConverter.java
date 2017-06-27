@@ -25,48 +25,40 @@
  * along with qub-docs.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.qubit.terra.docs.util;
+package com.qubit.terra.docs.util.converters;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 
-import org.apache.poi.xwpf.converter.pdf.PdfConverter;
-import org.apache.poi.xwpf.converter.pdf.PdfOptions;
-import org.apache.poi.xwpf.usermodel.XWPFDocument;
+import org.apache.commons.io.IOUtils;
 
-public class DocxToPdfReportConverter implements IReportConverter {
+import com.qubit.terra.docs.util.IReportConverter;
+import com.qubit.terra.docs.util.ReportGenerationException;
+import com.qubit.terra.docs.util.ReportGenerator;
+import com.qubit.terra.docs.util.helpers.OpenofficeInProcessConverter;
 
-    private FontProvider fontProvider;
+public class OdtToPdfOpenofficeConverter implements IReportConverter {
 
-    public DocxToPdfReportConverter(final String fontDirectory) {
-        fontProvider = FontProvider.create();
+    @Override
+    public boolean convertFromType(String mimeType) {
+        return ReportGenerator.ODT.equals(mimeType);
     }
 
     @Override
-    public boolean isForType(final String mimeType) {
+    public boolean isForType(String mimeType) {
         return ReportGenerator.PDF.equals(mimeType);
     }
 
     @Override
-    public byte[] convert(final InputStream document) {
+    public byte[] convert(InputStream document) {
         try {
-            XWPFDocument xWPFDocument = new XWPFDocument(document);
-            PdfOptions options = PdfOptions.getDefault();
-            options.fontProvider(fontProvider);
-
-            ByteArrayOutputStream result = new ByteArrayOutputStream();
-            PdfConverter.getInstance().convert(xWPFDocument, result, options);
-
-            return result.toByteArray();
-        } catch (IOException e) {
+            //return OpenofficeInProcessConverter.convertToPdf(IOUtils.toByteArray(document), "/tmp");
+            //THIS SHOULD BE REPLACED WITH System.IO. TEMP DIR
+            String property = "java.io.tmpdir";
+            String tempDir = System.getProperty(property);
+            return OpenofficeInProcessConverter.convert(IOUtils.toByteArray(document), tempDir, "pdf");
+        } catch (final Exception e) {
             throw new ReportGenerationException("Error converting the report", e);
         }
-    }
-
-    @Override
-    public boolean convertFromType(final String mimeType) {
-        return ReportGenerator.DOCX.equals(mimeType);
     }
 
 }

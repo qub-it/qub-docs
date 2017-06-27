@@ -25,33 +25,40 @@
  * along with qub-docs.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.qubit.terra.docs.util;
+package com.qubit.terra.docs.util.converters;
 
-import java.io.IOException;
 import java.io.InputStream;
 
-class DocxToDocxReportConverter implements IReportConverter {
+import org.apache.commons.io.IOUtils;
 
-    @Override
-    public boolean isForType(final String mimeType) {
-        return ReportGenerator.DOCX.equals(mimeType);
-    }
+import com.qubit.terra.docs.util.IReportConverter;
+import com.qubit.terra.docs.util.ReportGenerationException;
+import com.qubit.terra.docs.util.ReportGenerator;
+import com.qubit.terra.docs.util.helpers.OpenofficeInProcessConverter;
 
-    @Override
-    public byte[] convert(final InputStream document) {
-        try {
-            byte[] buffer = new byte[document.available()];
-            document.read(buffer);
-
-            return buffer;
-        } catch (IOException e) {
-            throw new ReportGenerationException("Error converting the report", e);
-        }
-    }
+public class OdtToDocxOpenofficeConverter implements IReportConverter {
 
     @Override
     public boolean convertFromType(String mimeType) {
+        return ReportGenerator.ODT.equals(mimeType);
+    }
+
+    @Override
+    public boolean isForType(String mimeType) {
         return ReportGenerator.DOCX.equals(mimeType);
+    }
+
+    @Override
+    public byte[] convert(InputStream document) {
+        try {
+            //return OpenofficeInProcessConverter.convertToPdf(IOUtils.toByteArray(document), "/tmp");
+            //THIS SHOULD BE REPLACED WITH System.IO. TEMP DIR
+            String property = "java.io.tmpdir";
+            String tempDir = System.getProperty(property);
+            return OpenofficeInProcessConverter.convert(IOUtils.toByteArray(document), tempDir, "docx");
+        } catch (final Exception e) {
+            throw new ReportGenerationException("Error converting the report", e);
+        }
     }
 
 }

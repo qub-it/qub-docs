@@ -1,6 +1,6 @@
 /**
- * This file was created by Quorum Born IT <http://www.qub-it.com/> and its 
- * copyright terms are bind to the legal agreement regulating the FenixEdu@ULisboa 
+ * This file was created by Quorum Born IT <http://www.qub-it.com/> and its
+ * copyright terms are bind to the legal agreement regulating the FenixEdu@ULisboa
  * software development project between Quorum Born IT and Serviços Partilhados da
  * Universidade de Lisboa:
  *  - Copyright © 2015 Quorum Born IT (until any Go-Live phase)
@@ -8,7 +8,7 @@
  *
  * Contributors: anil.mamede@qub-it.com, diogo.simoes@qub-it.com, diogo.simoes@qub-it.com
  *
- * 
+ *
  * This file is part of qub-docs.
  *
  * qub-docs is free software: you can redistribute it and/or modify
@@ -65,15 +65,16 @@ public class OpenofficeInProcessConverter {
                 return output;
 
             } else {
-                final String odtFilename = tempDirFullPath + "/openofficeConversion-" + currentTimeMillis + ".odt";
+                final File inputDir = new File(tempDirFullPath + "/documents-" + currentTimeMillis);
+                inputDir.mkdir();
+                final String odtFilename = tempDirFullPath + "/documents-" + currentTimeMillis + "/openofficeConversion-"
+                        + currentTimeMillis + ".odt";
 
                 FileUtils.writeByteArrayToFile(new File(odtFilename), odtContent);
 
-                final Process process =
-                        Runtime.getRuntime()
-                                .exec(String.format(
-                                        "soffice --headless --convert-to %s -env:UserInstallation=file://%s --outdir %s %s",
-                                        mimeTypeAbbreviation, tempDirFullPath, tempDirFullPath, odtFilename));
+                final Process process = Runtime.getRuntime()
+                        .exec(String.format("soffice --headless --convert-to %s -env:UserInstallation=file://%s --outdir %s %s",
+                                mimeTypeAbbreviation, tempDirFullPath, tempDirFullPath, odtFilename));
 
                 try {
                     process.waitFor();
@@ -85,7 +86,7 @@ public class OpenofficeInProcessConverter {
                 final String outputFilename =
                         tempDirFullPath + "/openofficeConversion-" + currentTimeMillis + "." + mimeTypeAbbreviation;
                 final byte[] output = FileUtils.readFileToByteArray(new File(outputFilename));
-                FileUtils.deleteQuietly(new File(odtFilename));
+                FileUtils.deleteQuietly(inputDir);
                 FileUtils.deleteQuietly(new File(outputFilename));
                 return output;
 
