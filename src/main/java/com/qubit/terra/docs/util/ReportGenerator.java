@@ -57,7 +57,6 @@ import com.qubit.terra.docs.util.converters.OdtToOdtReportConverter;
 import com.qubit.terra.docs.util.converters.OdtToPdfOpenofficeConverter;
 import com.qubit.terra.docs.util.converters.OdtToPdfReportConverter;
 import com.qubit.terra.docs.util.helpers.IDocumentHelper;
-import com.qubit.terra.docs.util.helpers.OpenofficeInProcessConverter;
 import com.qubit.terra.docs.util.processors.post.ReportGeneratorPostProcessor;
 import com.qubit.terra.docs.util.processors.pre.ReportGeneratorPreProcessor;
 
@@ -210,12 +209,6 @@ public class ReportGenerator implements IDocumentFieldsData {
             report.process(contextMap, outputStream);
 
             byte[] reportByteArray = outputStream.toByteArray();
-
-            //In order to export the layout information to the content section (add soft-page-breaks)
-            // we need to open and save the odt file
-            String property = "java.io.tmpdir";
-            String tempDir = System.getProperty(property);
-            reportByteArray = OpenofficeInProcessConverter.convert(reportByteArray, tempDir, "odt");
 
             for (ReportGeneratorPostProcessor postProcessor : postProcessors) {
                 reportByteArray = postProcessor.process(reportByteArray);
