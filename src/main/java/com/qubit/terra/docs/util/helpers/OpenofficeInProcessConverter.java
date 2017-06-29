@@ -35,19 +35,19 @@ public class OpenofficeInProcessConverter {
 
     private static final long ELAPSE_TIME = 2000;
 
-    public static synchronized byte[] convert(final byte[] odtContent, final String tempDirFullPath,
+    public static synchronized byte[] convert(final byte[] fileContent, final String fileExtension, final String tempDirFullPath,
             final String mimeTypeAbbreviation) {
 
         try {
             long currentTimeMillis = System.currentTimeMillis();
             if (System.getProperty("os.name").startsWith("Windows")) {
-                final String odtFilename = tempDirFullPath + "openofficeConversion-" + currentTimeMillis + ".odt";
+                final String fileName = tempDirFullPath + "openofficeConversion-" + currentTimeMillis + "." + fileExtension;
 
-                FileUtils.writeByteArrayToFile(new File(odtFilename), odtContent);
+                FileUtils.writeByteArrayToFile(new File(fileName), fileContent);
 
                 final Process process =
                         Runtime.getRuntime().exec(String.format("soffice --headless --convert-to %s --outdir %s %s",
-                                mimeTypeAbbreviation, tempDirFullPath.subSequence(0, tempDirFullPath.length() - 1), odtFilename));
+                                mimeTypeAbbreviation, tempDirFullPath.subSequence(0, tempDirFullPath.length() - 1), fileName));
 
                 try {
                     process.waitFor();
@@ -60,21 +60,21 @@ public class OpenofficeInProcessConverter {
                         tempDirFullPath + "openofficeConversion-" + currentTimeMillis + "." + mimeTypeAbbreviation;
                 final byte[] output = FileUtils.readFileToByteArray(new File(outputFilename));
 
-                FileUtils.deleteQuietly(new File(odtFilename));
+                FileUtils.deleteQuietly(new File(fileName));
                 FileUtils.deleteQuietly(new File(outputFilename));
                 return output;
 
             } else {
                 final File inputDir = new File(tempDirFullPath + "/documents-" + currentTimeMillis);
                 inputDir.mkdir();
-                final String odtFilename = tempDirFullPath + "/documents-" + currentTimeMillis + "/openofficeConversion-"
-                        + currentTimeMillis + ".odt";
+                final String fileName = tempDirFullPath + "/documents-" + currentTimeMillis + "/openofficeConversion-"
+                        + currentTimeMillis + "." + fileExtension;
 
-                FileUtils.writeByteArrayToFile(new File(odtFilename), odtContent);
+                FileUtils.writeByteArrayToFile(new File(fileName), fileContent);
 
                 final Process process = Runtime.getRuntime()
                         .exec(String.format("soffice --headless --convert-to %s -env:UserInstallation=file://%s --outdir %s %s",
-                                mimeTypeAbbreviation, tempDirFullPath, tempDirFullPath, odtFilename));
+                                mimeTypeAbbreviation, tempDirFullPath, tempDirFullPath, fileName));
 
                 try {
                     process.waitFor();
