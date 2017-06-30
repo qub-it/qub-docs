@@ -54,17 +54,15 @@ public class OdtTablePostProcessor extends ReportGeneratorPostProcessor {
             //Modify document copy to add the current page to last three columns if different break that table in a more suitable way
             Document copiedDocument = Document.loadDocument(new ByteArrayInputStream(copiedByteArray));
             for (Table table : copiedDocument.getTableList()) {
-                Row lastLastLastRow = table.getRowByIndex(table.getRowCount() - 3);
-                Row lastLastRow = table.getRowByIndex(table.getRowCount() - 2);
-                Row lastRow = table.getRowByIndex(table.getRowCount() - 1);
+                int numberOfRows = Integer.min(table.getRowCount(), 3);
 
-                Paragraph lastLastLastParagraph = getOrCreateParagraph(lastLastLastRow, PAGE_ANCHOR + table.getTableName() + "-");
-                Paragraph lastLastParagraph = getOrCreateParagraph(lastLastRow, PAGE_ANCHOR + table.getTableName() + "-");
-                Paragraph lastParagraph = getOrCreateParagraph(lastRow, PAGE_ANCHOR + table.getTableName() + "-");
+                for (int i = 1; i <= numberOfRows; i++) {
+                    Row row = table.getRowByIndex(table.getRowCount() - i);
 
-                Fields.createCurrentPageNumberField(lastLastLastParagraph.getOdfElement());
-                Fields.createCurrentPageNumberField(lastLastParagraph.getOdfElement());
-                Fields.createCurrentPageNumberField(lastParagraph.getOdfElement());
+                    Paragraph paragraph = getOrCreateParagraph(row, PAGE_ANCHOR + table.getTableName() + "-");
+
+                    Fields.createCurrentPageNumberField(paragraph.getOdfElement());
+                }
             }
             //In order to fill the page number we need to convert odt to pdf
             String property = "java.io.tmpdir";
@@ -75,7 +73,7 @@ public class OdtTablePostProcessor extends ReportGeneratorPostProcessor {
 
             tableNames.addAll(processPdf(copiedByteArray));
 
-            inWip(tableNames);
+            processTables(tableNames);
 
         } catch (Exception e) {
             throw new RuntimeException("Error in visiting Odf Document. " + e.getMessage());
@@ -118,7 +116,7 @@ public class OdtTablePostProcessor extends ReportGeneratorPostProcessor {
         return tablesToProcess;
     }
 
-    protected void inWip(final List<String> tableNames) {
+    protected void processTables(final List<String> tableNames) {
         //Find tables with only one or two rows on a new page
         for (TableTableElement table : document.getTables()) {
             if (tableNames.contains(table.getTableNameAttribute())) {
