@@ -34,8 +34,8 @@ public class OdtFootEndNotePostProcessor extends ReportGeneratorPostProcessor {
     protected void visit() {
         try {
             if (alignRight != null && alignRight) {
-                visitFootNotes();
-                visitEndNotes();
+//                visitFootNotes();
+//                visitEndNotes();
                 visitFooter();
             }
         } catch (Exception e) {
@@ -156,10 +156,10 @@ public class OdtFootEndNotePostProcessor extends ReportGeneratorPostProcessor {
                 continue;
             }
 
-            OdfStyleProperty marginLeftProperty = OdfStyleProperty.get(OdfStylePropertiesSet.ParagraphProperties,
-                    OdfName.newName(OdfDocumentNamespace.FO, "margin-left"));
-
-            paragraph.getAutomaticStyle().setProperty(marginLeftProperty, "9.999cm");
+//            OdfStyleProperty marginLeftProperty = OdfStyleProperty.get(OdfStylePropertiesSet.ParagraphProperties,
+//                    OdfName.newName(OdfDocumentNamespace.FO, "margin-left"));
+//
+//            paragraph.getAutomaticStyle().setProperty(marginLeftProperty, "9.999cm");
         }
 
     }
