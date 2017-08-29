@@ -45,6 +45,7 @@ import java.util.Set;
 import org.apache.commons.io.FileUtils;
 
 import com.google.common.base.Predicate;
+import com.google.common.base.Strings;
 import com.google.common.collect.Iterables;
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.pdf.PdfCopyFields;
@@ -63,6 +64,7 @@ import com.qubit.terra.docs.util.processors.pre.ReportGeneratorPreProcessor;
 import fr.opensagres.xdocreport.core.XDocReportException;
 import fr.opensagres.xdocreport.document.IXDocReport;
 import fr.opensagres.xdocreport.document.XDocReport;
+import fr.opensagres.xdocreport.document.dispatcher.AbstractXDocReportController;
 import fr.opensagres.xdocreport.document.images.ByteArrayImageProvider;
 import fr.opensagres.xdocreport.document.images.IImageProvider;
 import fr.opensagres.xdocreport.document.registry.XDocReportRegistry;
@@ -190,6 +192,11 @@ public class ReportGenerator implements IDocumentFieldsData {
     }
 
     public byte[] generateReport() {
+        // not cached
+        return generateReportCached((String) null);
+    }
+
+    public byte[] generateReportCached(final String reportId) {
 
         contextMap.registerFieldsMetadata();
 
@@ -198,8 +205,17 @@ public class ReportGenerator implements IDocumentFieldsData {
         try {
             outputStream = new ByteArrayOutputStream();
             final String freemarkerEngineKind = TemplateEngineKind.Freemarker.name();
-            IXDocReport report =
-                    XDocReport.loadReport(template, freemarkerEngineKind, fieldsMetadata, XDocReportRegistry.getRegistry());
+
+            IXDocReport report = null;
+            if (Strings.isNullOrEmpty(reportId)) {
+                report = XDocReport.loadReport(template, freemarkerEngineKind, fieldsMetadata, XDocReportRegistry.getRegistry());
+
+            } else {
+                // cached
+                report = XDocReport.getReport(reportId,
+                        new XDocReportController(template, freemarkerEngineKind, fieldsMetadata, documentMimeType),
+                        XDocReportRegistry.getRegistry());
+            }
 
             for (ReportGeneratorPreProcessor preProcessor : preProcessors) {
                 report.addPreprocessor(preProcessor.getEntryName(), preProcessor);
@@ -217,9 +233,17 @@ public class ReportGenerator implements IDocumentFieldsData {
             generatedReport = new ByteArrayInputStream(reportByteArray);
 
             return convert(generatedReport);
-        } catch (XDocReportException | IOException e) {
+
+        } catch (final Throwable e) {
             e.printStackTrace();
-            throw new ReportGenerationException(e.getMessage(), e);
+
+            if (e instanceof XDocReportException || e instanceof IOException) {
+                throw new ReportGenerationException(e.getMessage(), e);
+
+            } else {
+                return null;
+            }
+
         } finally {
             if (generatedReport != null) {
                 try {
@@ -236,6 +260,30 @@ public class ReportGenerator implements IDocumentFieldsData {
                     throw new ReportGenerationException(e.getMessage(), e);
                 }
             }
+        }
+    }
+
+    static private class XDocReportController extends AbstractXDocReportController {
+
+        private InputStream sourceStream;
+        private FieldsMetadata fieldsMetadata;
+
+        public XDocReportController(final InputStream sourceStream, final String templateEngineKind,
+                final FieldsMetadata fieldsMetadata, final String converterTypeFrom) {
+
+            super(templateEngineKind, converterTypeFrom);
+            this.sourceStream = sourceStream;
+            this.fieldsMetadata = fieldsMetadata;
+        }
+
+        @Override
+        public InputStream getSourceStream() throws IOException {
+            return sourceStream;
+        }
+
+        @Override
+        protected FieldsMetadata createFieldsMetadata() {
+            return this.fieldsMetadata;
         }
     }
 
