@@ -68,9 +68,9 @@ public class OdtTablePostProcessor extends ReportGeneratorPostProcessor {
             String property = "java.io.tmpdir";
             String tempDir = System.getProperty(property);
             ByteArrayOutputStream copiedByteArrayStream = new ByteArrayOutputStream();
-            copiedDocument.close();
             copiedDocument.save(copiedByteArrayStream);
             copiedByteArray = OpenofficeInProcessConverter.convert(copiedByteArrayStream.toByteArray(), "odt", tempDir, "pdf");
+            copiedDocument.close();
             copiedByteArrayStream.close();
 
             tableNames.addAll(processPdf(copiedByteArray));
