@@ -48,11 +48,13 @@ public class OdtTablePostProcessor extends ReportGeneratorPostProcessor {
 
     @Override
     protected void visit() {
+        Document copiedDocument = null;
+        ByteArrayOutputStream copiedByteArrayStream = null;
         try {
             List<String> tableNames = new ArrayList<>();
             byte[] copiedByteArray = save();
             //Modify document copy to add the current page to last three columns if different break that table in a more suitable way
-            Document copiedDocument = Document.loadDocument(new ByteArrayInputStream(copiedByteArray));
+            copiedDocument = Document.loadDocument(new ByteArrayInputStream(copiedByteArray));
             for (Table table : copiedDocument.getTableList()) {
                 int numberOfRows = Integer.min(table.getRowCount(), 3);
 
@@ -67,7 +69,7 @@ public class OdtTablePostProcessor extends ReportGeneratorPostProcessor {
             //In order to fill the page number we need to convert odt to pdf
             String property = "java.io.tmpdir";
             String tempDir = System.getProperty(property);
-            ByteArrayOutputStream copiedByteArrayStream = new ByteArrayOutputStream();
+            copiedByteArrayStream = new ByteArrayOutputStream();
             copiedDocument.save(copiedByteArrayStream);
             copiedByteArray = OpenofficeInProcessConverter.convert(copiedByteArrayStream.toByteArray(), "odt", tempDir, "pdf");
             copiedDocument.close();
@@ -78,6 +80,18 @@ public class OdtTablePostProcessor extends ReportGeneratorPostProcessor {
             processTables(tableNames);
         } catch (Exception e) {
             throw new RuntimeException("Error in visiting Odf Document. " + e.getMessage());
+        } finally {
+            if (copiedDocument != null) {
+                copiedDocument.close();
+            }
+            if (copiedByteArrayStream != null) {
+                try {
+                    copiedByteArrayStream.close();
+                } catch (IOException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+            }
         }
 
     }
