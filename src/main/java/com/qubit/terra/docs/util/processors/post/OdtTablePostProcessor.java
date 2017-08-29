@@ -68,13 +68,14 @@ public class OdtTablePostProcessor extends ReportGeneratorPostProcessor {
             String property = "java.io.tmpdir";
             String tempDir = System.getProperty(property);
             ByteArrayOutputStream copiedByteArrayStream = new ByteArrayOutputStream();
+            copiedDocument.close();
             copiedDocument.save(copiedByteArrayStream);
             copiedByteArray = OpenofficeInProcessConverter.convert(copiedByteArrayStream.toByteArray(), "odt", tempDir, "pdf");
+            copiedByteArrayStream.close();
 
             tableNames.addAll(processPdf(copiedByteArray));
 
             processTables(tableNames);
-
         } catch (Exception e) {
             throw new RuntimeException("Error in visiting Odf Document. " + e.getMessage());
         }
@@ -83,11 +84,11 @@ public class OdtTablePostProcessor extends ReportGeneratorPostProcessor {
 
     protected List<String> processPdf(final byte[] pdfContent) {
         List<String> tablesToProcess = new ArrayList<>();
-
+        PDDocument pdfDoc = null;
         try {
             //Read PDF and find pattern
             Map<String, Set<Integer>> verifyTablesSplit = new HashMap<>();
-            PDDocument pdfDoc = PDDocument.load(pdfContent);
+            pdfDoc = PDDocument.load(pdfContent);
             PDFTextStripper pdfStripper = new PDFTextStripper();
             String text = pdfStripper.getText(pdfDoc);
             Matcher matcher = PATTERN.matcher(text);
@@ -111,6 +112,15 @@ public class OdtTablePostProcessor extends ReportGeneratorPostProcessor {
         } catch (IOException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
+        } finally {
+            if (pdfDoc != null) {
+                try {
+                    pdfDoc.close();
+                } catch (IOException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+            }
         }
 
         return tablesToProcess;
