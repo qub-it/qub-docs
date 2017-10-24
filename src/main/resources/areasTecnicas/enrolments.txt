@@ -1,0 +1,122 @@
+[#assign totalEnrolments = 0]
+[#assign totalEcts=0]
+[#assign enrolmentsList = [] ]
+[#if totalStandaloneEnrolments??]
+    [#assign totalEnrolments = totalStandaloneEnrolments ]
+    [#assign totalEcts= numbers.onePlace(totalStandaloneECTS) ]
+    [#assign enrolmentsList = standaloneEnrolmentsList ]
+[/#if]
+[#if totalNormalEnrolments??]
+    [#assign totalEnrolments = totalNormalEnrolments ]
+    [#assign totalEcts= numbers.onePlace(totalNormalECTS) ]    
+    [#assign enrolmentsList = normalEnrolmentsList ]
+[/#if]
+
+[#assign totalExtraEnrolments = 0]
+[#assign totalExtraEcts=0]
+[#assign extraEnrolmentsList = [] ]
+[#if totalExtracurricularEnrolments??]
+    [#assign totalExtraEnrolments = totalExtracurricularEnrolments ]
+    [#assign totalExtraEcts= numbers.onePlace(totalExtracurricularECTS) ]
+    [#assign extraEnrolmentsList = extracurricularEnrolmentsList ]
+[/#if]
+
+[#assign hasExtraEnrolments = false]
+[#if totalExtraEnrolments > 0]
+    [#assign hasExtraEnrolments = true]
+[/#if]
+
+[#assign endEnrolmentSentence = "."]
+[#if serviceRequest.detailed]
+    [#if totalEnrolments > 1 ]
+        [#assign endEnrolmentSentence = ", " + nas_seguintes_unidades_curriculares + ":" ]
+        [#assign Unidade_Curricular = Unidades_Curriculares ]
+    [#else]
+        [#assign endEnrolmentSentence = ", " + na_seguinte_unidade_curricular + ":" ]
+        [#assign Unidade_Curricular = Unidade_Curricular ]
+    [/#if]
+[/#if]
+
+[#if totalExtraEnrolments > 1 ]
+    [#assign Unidade_Extracurricular = Unidades_Extracurriculares ]
+[#else]
+    [#assign Unidade_Extracurricular = Unidade_Extracurricular ]
+[/#if]
+
+
+
+[#assign enrLst = [] ]
+[#list enrolmentsList as enrolment]
+    [#assign tmpEnrolmentName = "${lang.i18n(enrolment.name)}"]
+    
+    [#assign tmpSemester = "${enrolment.executionSemester.semester}"]
+    [#if enrolment.isAnnual()]
+        [#assign tmpSemester = "1, 2"]
+    [/#if]
+    
+    [#assign tmpEcts = "${numbers.onePlace(enrolment.ectsCredits)}"]
+    [#if tmpEcts == "0.0"]
+        [#assign tmpEcts = "-"]
+    [/#if]
+    
+    [#assign tmpShifts = [] ]
+    [#if enrolment.getICurriculumEntry().getExecutionCourseFor(enrolment.executionSemester)??]
+        [#list enrolment.getICurriculumEntry().getRegistration().getShiftsFor(enrolment.getICurriculumEntry().getExecutionCourseFor(enrolment.executionSemester)) as row]
+            [#assign tmpShifts = tmpShifts + ["${row.nome}"] ]
+        [/#list]
+    [/#if]
+    [#assign tmpShiftsString = tmpShifts?join(",") ]
+    
+    [#assign tmpMap = {"a" : "${tmpEnrolmentName}", "c" : "${tmpSemester}", "d" : "${tmpEcts}", "b" : "${tmpShiftsString}"} ]
+    [#assign enrLst = enrLst + [tmpMap]]
+[/#list]
+qubList("enrLst")
+
+[#assign exLst = [] ]
+[#list extraEnrolmentsList as enrolment]
+    [#assign tmpEnrolmentName = "${lang.i18n(enrolment.name)}"]
+    
+    [#assign tmpSemester = "${enrolment.executionSemester.semester}"]
+    [#if enrolment.isAnnual()]
+        [#assign tmpSemester = "1, 2"]
+    [/#if]
+    
+    [#assign tmpEcts = "${numbers.onePlace(enrolment.ectsCredits)}"]
+    [#if tmpEcts == "0.0"]
+        [#assign tmpEcts = "-"]
+    [/#if]
+    
+    [#assign tmpShifts = [] ]
+    [#if enrolment.getICurriculumEntry().getExecutionCourseFor(enrolment.executionSemester)??]
+        [#list enrolment.getICurriculumEntry().getRegistration().getShiftsFor(enrolment.getICurriculumEntry().getExecutionCourseFor(enrolment.executionSemester)) as row]
+            [#assign tmpShifts = tmpShifts + ["${row.nome}"] ]
+        [/#list]
+    [/#if]
+    [#assign tmpShiftsString = tmpShifts?join(",") ]
+    
+    [#assign tmpMap = {"a" : "${tmpEnrolmentName}", "c" : "${tmpSemester}", "d" : "${tmpEcts}", "b" : "${tmpShiftsString}"} ]
+    [#assign exLst = exLst + [tmpMap]]
+[/#list]
+qubList("exLst")
+
+[#if executionYearInformation.isBefore("2014-01-01")]
+    [#assign stampSentence = stampOldSentence]
+[#else]
+    [#assign stampSentence = stampSentence]
+[/#if]
+
+[#if serviceRequest.findProperty("executionYear").value.isCurrent()]
+    [#assign esta = esta]
+[#else]
+    [#assign esta = esteve]
+[/#if]
+
+[#assign additionalInformation = ""]
+[#if serviceRequest.hasProperty("enrolmentProofAdditionalInformation1")]
+    [#assign additionalInformation = "\n" + serviceRequest.findProperty("enrolmentProofAdditionalInformation1").getValue() + "\n" ]
+[/#if]
+[#if serviceRequest.hasProperty("enrolmentProofAdditionalInformation2")]
+    [#assign additionalInformation = additionalInformation + "\n" + serviceRequest.findProperty("enrolmentProofAdditionalInformation2").getValue() + "\n" ]
+[/#if]
+
+

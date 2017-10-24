@@ -1,0 +1,43 @@
+
+[#assign showPreferenceOrder = false]
+[#if serviceRequest.hasProperty("showSchoolClassPreferenceOrder")]
+    [#if serviceRequest.findProperty("showSchoolClassPreferenceOrder").getValue()]
+        [#assign showPreferenceOrder = true ]
+    [/#if]
+[/#if]
+    
+[#assign sceLst = [] ]
+[#assign executionYearBeginLocalDate = serviceRequest.executionYear.beginLocalDate ]
+[#assign executionYearEndLocalDate = serviceRequest.executionYear.endLocalDate ]
+[#list serviceRequest.registration.registrationDataByExecutionIntervalsSet as registrationData]
+    [#assign registrationDataBeginLocalDate = registrationData.executionInterval.beginLocalDate]
+    [#assign registrationDataEndLocalDate = registrationData.executionInterval.endLocalDate]
+    [#if !registrationDataBeginLocalDate.isBefore(executionYearBeginLocalDate)]
+        [#if !registrationDataEndLocalDate.isAfter(executionYearEndLocalDate)]
+            [#list registrationData.schoolClassEnrolmentPreferencesSet as schoolClassEnrolmentPreference]
+                
+                [#assign tmpSemester = "${registrationData.executionInterval.semester}"]
+
+                [#assign tmpPreferenceOrder = schoolClassEnrolmentPreference.preferenceOrder!-1]
+                
+                [#if schoolClassEnrolmentPreference.schoolClass?? ]
+                    [#assign tmpSchoolClass = "${schoolClassEnrolmentPreference.schoolClass.editablePartOfName}"]
+                [#else]
+                    [#assign tmpSchoolClass = "---"]
+                [/#if]
+                                
+                [#assign tmpMap = { "a" : "${tmpSemester}", "b" : tmpPreferenceOrder, "c" : "${tmpSchoolClass}" } ]
+                [#assign sceLst = sceLst + [tmpMap] ]
+            [/#list]
+
+        [/#if]
+    [/#if]
+[/#list]
+qubList("sceLst")
+
+[#if sceLst?size == 0]
+    [#assign showPreferenceOrder = false]
+[/#if]
+
+[#assign sceLst = order.sort(sceLst, "a b")]
+

@@ -1,0 +1,5 @@
+[#if hasPricetag]
+    [#assign priceTag = Emolumento + ": " + money.total(serviceRequestPrice)]
+[#else]
+    [#assign priceTag = ""]
+[/#if]

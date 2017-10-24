@@ -1,0 +1,79 @@
+[#assign registrationNumber= registration.number ]
+[#assign degreeName = lang.i18n(curricularPlanInformation.registration.degree.nameI18N) ]
+
+[#assign degreeType = lang.i18n(curricularPlanInformation.registration.degreeType.name)?replace(space_bolonha,"")?replace(bolonha_space,"") ]
+
+[#if curricularPlanInformation.registration.degreeType.degreeType]
+    [#assign degreeTypeSentence = "${degreeType} ${concluida_a}"]
+[#else]
+    [#assign degreeTypeSentence = "${degreeType} ${concluido_a}"]
+[/#if]
+
+[#assign degreeNameUpperCase = degreeName?upper_case]
+
+[#assign degreeName = degreeType + " " + em + " " + degreeName]
+
+[#if degreeDocumentInfo??]
+    [#assign degreeName = lang.i18n(degreeDocumentInfo.degreeName) ]
+[/#if]
+
+[#assign curricularYear = curriculumInformation.curricularYear ]
+[#assign curricularYearText = ""]
+[#if serviceRequest.hasProperty("showCurricularYear")]
+    [#if serviceRequest.findProperty("showCurricularYear").getValue()]
+        [#assign curricularYearText = no + " " + curricularYear + dates.getDayOfMonthOrdinal(curricularYear, true, false) + " " + ano_curricular]
+    [/#if]
+[/#if]
+
+[#assign curricularYearShortText = curricularYear + dates.getDayOfMonthOrdinal(curricularYear, true, false) + " " + ano_curricular]
+
+
+[#assign degreePreposition = do]
+[#assign degreePrepositionEM = no]
+[#assign degreeNameUpperCase = degreeName?upper_case]
+[#if degreeNameUpperCase?contains(LICENCIATURA)]
+    [#assign degreePreposition = da]
+    [#assign degreePrepositionEM = na]
+[/#if]
+[#if serviceRequest.hasProperty("degreePrepositionGender")]
+    [#if serviceRequest.findProperty("degreePrepositionGender").getValue()]
+        [#assign degreePreposition = da]
+        [#assign degreePrepositionEM = na]
+    [#else]
+        [#assign degreePreposition = do]
+        [#assign degreePrepositionEM = no]
+    [/#if]
+[/#if]
+
+[#assign degreeText = " ${degreePreposition} ${degreeName}"]
+[#assign degreeTextEM = " ${degreePrepositionEM} ${degreeName}"]
+[#if serviceRequest.serviceRequestType.code == "STANDALONE_APPROVEMENT_MOBILITY_CERTIFICATE" || serviceRequest.serviceRequestType.code == "STANDALONE_ENROLMENT_CERTIFICATE" ]
+    [#assign degreeText = ""]
+    [#assign degreeTextEM = ""]
+[/#if]
+
+[#if degreeText?length != 0]
+    [#if curricularYearText?length != 0]
+        [#assign curricularYearText = ", " + curricularYearText ]
+    [/#if]
+[/#if]
+
+[#assign no_ano_lectivo_virgula = ","]
+[#if degreeText?length == 0]
+    [#if curricularYearText?length == 0]
+            [#assign no_ano_lectivo_virgula = ""]
+    [/#if]
+[/#if]
+
+
+[#assign registrationExtendedDate = lang.i18n(dates.extendedDate(registration.startDate))]
+
+[#assign startExecutionYearName = "---" ]
+[#if registration.startExecutionYear??]
+    [#assign startExecutionYearName = registration.startExecutionYear.name ]
+[/#if]
+
+[#assign observation = ""]
+[#if serviceRequest.hasProperty("observation")]
+    [#assign observation = serviceRequest.findProperty("observation").string!"(observation missing!)"]
+[/#if]
