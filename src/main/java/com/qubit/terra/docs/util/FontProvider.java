@@ -1,6 +1,6 @@
 /**
- * This file was created by Quorum Born IT <http://www.qub-it.com/> and its 
- * copyright terms are bind to the legal agreement regulating the FenixEdu@ULisboa 
+ * This file was created by Quorum Born IT <http://www.qub-it.com/> and its
+ * copyright terms are bind to the legal agreement regulating the FenixEdu@ULisboa
  * software development project between Quorum Born IT and Serviços Partilhados da
  * Universidade de Lisboa:
  *  - Copyright © 2015 Quorum Born IT (until any Go-Live phase)
@@ -8,7 +8,7 @@
  *
  * Contributors: anil.mamede@qub-it.com, diogo.simoes@qub-it.com
  *
- * 
+ *
  * This file is part of qub-docs.
  *
  * qub-docs is free software: you can redistribute it and/or modify
@@ -29,9 +29,8 @@ package com.qubit.terra.docs.util;
 
 import java.awt.Color;
 
-import org.apache.poi.xwpf.converter.pdf.ITextFontRegistry;
-
 import com.lowagie.text.Font;
+import com.lowagie.text.FontFactory;
 import com.lowagie.text.pdf.BaseFont;
 
 import fr.opensagres.xdocreport.itext.extension.font.IFontProvider;
@@ -46,7 +45,7 @@ public class FontProvider implements IFontProvider {
     }
 
     @Override
-    public Font getFont(String familyName, String encoding, float size, int style, Color color) {
+    public Font getFont(final String familyName, final String encoding, final float size, final int style, final Color color) {
         try {
             BaseFont baseFont = fontManager.findBaseFont(familyName, style);
 
@@ -58,7 +57,7 @@ public class FontProvider implements IFontProvider {
             return font;
         } catch (Throwable e) {
             e.printStackTrace();
-            return ITextFontRegistry.getRegistry().getFont(familyName, encoding, size, style, color);
+            return FontFactory.getFont(familyName, encoding, size, style, color);
         }
     }
 
