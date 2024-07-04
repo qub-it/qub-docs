@@ -1,3 +1,5 @@
+- Improvement: Excludes old ooxml-schemas dependency [#qubIT-Omnis-6199]
+
 1.2.1 (12-06-2023)
 - Improvement: Upgrading joda time dependency
 
