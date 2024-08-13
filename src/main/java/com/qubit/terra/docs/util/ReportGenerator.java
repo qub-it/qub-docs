@@ -350,6 +350,11 @@ public class ReportGenerator implements IDocumentFieldsData {
             return Iterables.any(this.dataProviders, new Predicate<IReportDataProvider>() {
 
                 @Override
+                public boolean test(IReportDataProvider input) {
+                    return apply(input);
+                }
+
+                @Override
                 public boolean apply(final IReportDataProvider provider) {
                     return provider.handleKey((String) key);
                 }
